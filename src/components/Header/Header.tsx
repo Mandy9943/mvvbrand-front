@@ -28,48 +28,55 @@ export const Header = () => {
   const isLoggedIn = useGetIsLoggedIn();
   const isUnlockRoute = Boolean(useMatch(RouteNamesEnum.unlock));
 
-  const ConnectButton = isUnlockRoute ? null : (
-    <MxLink to={RouteNamesEnum.unlock}>Connect</MxLink>
-  );
-
   const handleLogout = () => {
     sessionStorage.clear();
-    logout(
-      callbackUrl,
-      /*
-       * following are optional params. Feel free to remove them in your implementation
-       */
-      onRedirect,
-      shouldAttemptReLogin,
-      options
-    );
+    logout(callbackUrl, onRedirect, shouldAttemptReLogin, options);
   };
 
   return (
-    <header className='flex flex-row align-center justify-between pl-6 pr-6 pt-6'>
-      <MxLink
-        className='flex items-center justify-between'
-        to={RouteNamesEnum.home}
-      >
-        Mvxbrand
-      </MxLink>
+    <header className='fixed top-0 left-0 right-0 bg-black/80 backdrop-blur-md border-b border-slate-200 z-50'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='flex items-center justify-between h-16'>
+          {/* Logo Section */}
+          <MxLink
+            className='flex items-center space-x-2 text-slate-900 hover:text-blue-600 transition-colors'
+            to={RouteNamesEnum.home}
+          >
+            <img src='/icon.png' alt='MVXBrand' className='h-8 w-auto ' />
+            <span className='font-semibold text-lg text-white'>MVXBrand</span>
+          </MxLink>
 
-      <nav className='h-full w-full text-sm sm:relative sm:left-auto sm:top-auto sm:flex sm:w-auto sm:flex-row sm:justify-end sm:bg-transparent'>
-        <div className='flex justify-end container mx-auto items-center gap-2'>
-          <div className='flex gap-1 items-center'>
-            <div className='w-2 h-2 rounded-full bg-green-500' />
-            <p className='text-gray-600'>{environment}</p>
+          {/* Right Section */}
+          <div className='flex items-center space-x-4'>
+            {/* Environment Badge */}
+            <div className='flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-100'>
+              <div className='w-2 h-2 rounded-full bg-green-500' />
+              <span className='text-sm text-slate-600'>{environment}</span>
+            </div>
+
+            {/* Auth Button */}
+            {isLoggedIn ? (
+              <Button
+                onClick={handleLogout}
+                className='bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg
+                          transition-all hover:shadow-md'
+              >
+                Disconnect
+              </Button>
+            ) : (
+              !isUnlockRoute && (
+                <Button
+                  asChild
+                  className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg
+                          transition-all hover:shadow-md'
+                >
+                  <MxLink to={RouteNamesEnum.unlock}>Connect Wallet</MxLink>
+                </Button>
+              )
+            )}
           </div>
-
-          {isLoggedIn ? (
-            <Button onClick={handleLogout} className=''>
-              Close
-            </Button>
-          ) : (
-            ConnectButton
-          )}
         </div>
-      </nav>
+      </div>
     </header>
   );
 };

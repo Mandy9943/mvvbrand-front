@@ -1,46 +1,103 @@
 import { RouteNamesEnum } from '@/localConstants';
+import { setRedirectRoute } from '@/utils/redirectUtils';
 import { PageWrapper } from '@/wrappers';
+import { useGetIsLoggedIn } from '@multiversx/sdk-dapp/hooks';
 import { useNavigate } from 'react-router-dom';
 
 export const Home = () => {
   const navigate = useNavigate();
+  const isLoggedIn = useGetIsLoggedIn();
+
+  const handleNavigate = (route: RouteNamesEnum) => {
+    if (!isLoggedIn) {
+      setRedirectRoute(route);
+      navigate(RouteNamesEnum.unlock);
+    } else {
+      navigate(route);
+    }
+  };
 
   return (
     <PageWrapper>
-      <div className='flex flex-col-reverse sm:flex-row items-center h-full w-full'>
-        <div className='flex items-start sm:items-center h-full w-full sm:w-1/2'>
-          <div className='flex flex-col gap-6 max-w-[600px] text-center sm:text-left'>
-            <h1 className='text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-800'>
-              Brand your blockchain token
+      <div className='min-h-screen bg-gradient-to-b from-slate-50 to-blue-50'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20'>
+          {/* Hero Section */}
+          <div className='text-center mb-16'>
+            <h1 className='text-4xl sm:text-6xl font-extrabold text-slate-900 mb-6'>
+              Brand Your MultiversX Token{' '}
+              <span className='text-blue-600'>in Minutes</span>
             </h1>
-            <p className='text-xl sm:text-2xl text-slate-600'>
-              Join the multiverse and create unique, branded tokens
+            <p className='text-xl sm:text-2xl text-slate-600 max-w-3xl mx-auto'>
+              No coding required. Brand any token on MultiversX blockchain with
+              just a few clicks.
             </p>
-            <div className='flex flex-col sm:flex-row gap-4 mt-4'>
-              <button
-                onClick={() => navigate(RouteNamesEnum.brandMemexchangeToken)}
-                className='px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-lg font-medium'
-              >
-                Brand a Memexchange coin
-              </button>
-              <button
-                onClick={() => navigate(RouteNamesEnum.brandMyToken)}
-                className='px-6 py-3 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors text-lg font-medium'
-              >
-                Brand your own coin
-              </button>
+          </div>
+
+          {/* Main CTA Buttons */}
+          <div className='flex flex-col sm:flex-row justify-center gap-4 mb-16'>
+            <button
+              onClick={() =>
+                handleNavigate(RouteNamesEnum.brandMemexchangeToken)
+              }
+              className='px-8 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 
+                         transition-all transform hover:scale-105 shadow-lg text-lg font-semibold'
+            >
+              Brand MemeExchange Token
+            </button>
+            <button
+              onClick={() => handleNavigate(RouteNamesEnum.brandMyToken)}
+              className='px-8 py-4 bg-slate-800 text-white rounded-xl hover:bg-slate-900 
+                         transition-all transform hover:scale-105 shadow-lg text-lg font-semibold'
+            >
+              Brand Custom Token
+            </button>
+          </div>
+
+          {/* Features Grid */}
+          <div className='grid md:grid-cols-3 gap-8 text-center'>
+            <div className='p-6 rounded-xl bg-white shadow-md'>
+              <div className='text-blue-600 text-4xl mb-4'>🚀</div>
+              <h3 className='text-xl font-bold text-slate-800 mb-2'>
+                Quick & Easy
+              </h3>
+              <p className='text-slate-600'>
+                Brand your token in minutes without any technical knowledge
+              </p>
+            </div>
+            <div className='p-6 rounded-xl bg-white shadow-md'>
+              <div className='text-blue-600 text-4xl mb-4'>🔒</div>
+              <h3 className='text-xl font-bold text-slate-800 mb-2'>
+                No Dev Account Needed
+              </h3>
+              <p className='text-slate-600'>
+                Skip the GitHub hassle - brand directly through our platform
+              </p>
+            </div>
+            <div className='p-6 rounded-xl bg-white shadow-md'>
+              <div className='text-blue-600 text-4xl mb-4'>🌟</div>
+              <h3 className='text-xl font-bold text-slate-800 mb-2'>
+                MemeExchange Integration
+              </h3>
+              <p className='text-slate-600'>
+                Special support for MemeExchange.fun tokens
+              </p>
             </div>
           </div>
-        </div>
-        <div className='w-full sm:w-1/2 h-full sm:h-full relative'>
-          <div
-            className='absolute inset-0 bg-contain bg-center bg-no-repeat'
-            style={{
-              backgroundImage:
-                'url(https://cdn.usegalileo.ai/sdxl10/62425988-c1ce-4193-91c9-5d94c852e360.png)',
-              opacity: 0.15
-            }}
-          />
+
+          {/* Built By Section */}
+          <div className='text-center mt-16'>
+            <p className='text-slate-600'>
+              Built with ❤️ by{' '}
+              <a
+                href='https://memexchange.fun'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-blue-600 hover:text-blue-700 font-medium'
+              >
+                MemeExchange.fun
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </PageWrapper>
