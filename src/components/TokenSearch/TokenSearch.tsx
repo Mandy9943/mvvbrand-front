@@ -1,4 +1,5 @@
 import { Input } from '@/components/ui/input';
+import { network } from '@/config';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useGetAccountInfo } from '@multiversx/sdk-dapp/hooks';
@@ -57,11 +58,13 @@ export function TokenSearch({
         let response;
         if (mode === 'memexchange') {
           response = await fetch(
-            `http://localhost:5000/api/bonding-pairs/search?query=${debouncedSearch}`
+            `${
+              import.meta.env.VITE_MEMEXCHANGE_API_URL
+            }/api/bonding-pairs/search?query=${debouncedSearch}`
           );
         } else {
           response = await fetch(
-            'https://devnet-api.multiversx.com/accounts/erd1twpgwyu2hd0jrx3q2uypum8vwhgvm2jvl66nswq0lk9fe37xkddqkp92v0/tokens'
+            `${network.apiAddress}/accounts/${address}/tokens`
           );
         }
         const data = await response.json();
