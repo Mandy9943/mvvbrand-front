@@ -60,7 +60,7 @@ export function TokenSearch({
           response = await fetch(
             `${
               import.meta.env.VITE_MEMEXCHANGE_API_URL
-            }/api/bonding-pairs/search?query=${debouncedSearch}`
+            }/api/bonding-pairs/search?query=${debouncedSearch}&state=Finished`
           );
         } else {
           response = await fetch(
