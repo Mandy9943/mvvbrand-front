@@ -64,15 +64,15 @@ export const BrandOwnToken = () => {
   const getStepContent = () => {
     if (!!isCompleted) {
       return (
-        <div className='bg-white p-8 rounded-xl shadow-sm border'>
+        <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
           <div className='text-center space-y-4'>
-            <div className='mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center'>
-              <CheckIcon className='w-8 h-8 text-green-600' />
+            <div className='mx-auto w-12 sm:w-16 h-12 sm:h-16 bg-green-100 rounded-full flex items-center justify-center'>
+              <CheckIcon className='w-6 sm:w-8 h-6 sm:h-8 text-green-600' />
             </div>
-            <h2 className='text-2xl font-semibold'>
+            <h2 className='text-xl sm:text-2xl font-semibold'>
               Branding Request Submitted!
             </h2>
-            <p className='text-slate-600'>
+            <p className='text-sm sm:text-base text-slate-600 max-w-md mx-auto'>
               Your token branding request has been submitted successfully. You
               can check the status of your request at:
             </p>
@@ -80,12 +80,17 @@ export const BrandOwnToken = () => {
               href={`${isCompleted}`}
               target='_blank'
               rel='noopener noreferrer'
-              className='inline-block text-blue-600 hover:text-blue-800 underline'
+              className='inline-block text-sm sm:text-base text-blue-600 hover:text-blue-800 underline'
             >
               View Token Page
             </a>
-            <div className='mt-8'>
-              <Button onClick={() => navigate('/')}>Back to Home</Button>
+            <div className='mt-6 sm:mt-8'>
+              <Button
+                onClick={() => navigate('/')}
+                className='w-full sm:w-auto'
+              >
+                Back to Home
+              </Button>
             </div>
           </div>
         </div>
@@ -94,7 +99,7 @@ export const BrandOwnToken = () => {
 
     if (!selectedToken) {
       return (
-        <div className='bg-white p-8 rounded-xl shadow-sm border'>
+        <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
           <TokenSearch onSelect={setSelectedToken} mode='own' />
         </div>
       );
@@ -102,7 +107,7 @@ export const BrandOwnToken = () => {
 
     if (!commitHash) {
       return (
-        <div className='bg-white p-8 rounded-xl shadow-sm border'>
+        <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
           <TokenForm
             mode='create'
             initialTokenId={selectedToken.identifier}
@@ -119,13 +124,13 @@ export const BrandOwnToken = () => {
     }
 
     return (
-      <div className='bg-white p-8 rounded-xl shadow-sm border'>
-        <div className='space-y-6'>
-          <div className='p-4 bg-slate-50 rounded-lg'>
-            <p className='text-sm text-slate-600 mb-2'>
+      <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
+        <div className='space-y-4 sm:space-y-6'>
+          <div className='p-3 sm:p-4 bg-slate-50 rounded-lg'>
+            <p className='text-sm sm:text-base text-slate-600 mb-2'>
               Please sign this message to complete the branding process:
             </p>
-            <code className='block bg-white p-2 rounded border text-sm'>
+            <code className='block bg-white p-2 sm:p-3 rounded border text-xs sm:text-sm break-all'>
               {commitHash}
             </code>
           </div>
@@ -144,10 +149,14 @@ export const BrandOwnToken = () => {
 
   return (
     <PageWrapper>
-      <div className='w-full max-w-3xl mx-auto space-y-8'>
-        <div className='text-center space-y-4'>
-          <h1 className='text-3xl font-bold'>Brand Your Own Token</h1>
-          <p className='text-slate-600'>{getStepTitle()}</p>
+      <div className='w-full max-w-3xl mx-auto space-y-6 sm:space-y-8 px-4 sm:px-6 py-8 sm:py-16'>
+        <div className='text-center space-y-3 sm:space-y-4'>
+          <h1 className='text-2xl sm:text-3xl font-bold'>
+            Brand Your Own Token
+          </h1>
+          <p className='text-sm sm:text-base text-slate-600'>
+            {getStepTitle()}
+          </p>
         </div>
 
         {getStepContent()}

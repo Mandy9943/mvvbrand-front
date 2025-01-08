@@ -31,6 +31,7 @@ interface TokenFormProps {
     response: { commitHash: string },
     tokenId: string
   ) => void;
+  onBrandingSuccess?: (response: { pullRequestUrl: string }) => void;
 }
 
 export function TokenForm({
@@ -42,7 +43,8 @@ export function TokenForm({
   website,
   social,
   onBack,
-  onPrepareSuccess
+  onPrepareSuccess,
+  onBrandingSuccess
 }: TokenFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -107,10 +109,7 @@ export function TokenForm({
         onPrepareSuccess?.(response, data.tokenId);
       } else {
         const response = await ApiService.submitTokenBranding(requestData);
-        toast({
-          title: 'Success',
-          description: `Pull request created: ${response.pullRequestUrl}`
-        });
+        onBrandingSuccess?.(response);
       }
     } catch (error) {
       console.error(error);
@@ -206,17 +205,18 @@ export function TokenForm({
 
   return (
     <Form {...form}>
-      <div className='mb-8 space-y-6'>
-        <div className='flex items-center justify-between'>
+      <div className='space-y-6 sm:space-y-8'>
+        <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
           <Button
             type='button'
             variant='ghost'
-            className='text-slate-600 hover:text-slate-900'
+            className='text-slate-600 hover:text-slate-900 self-start'
             onClick={onBack}
           >
             <ArrowLeft className='mr-2 h-4 w-4' />
             Change Token
           </Button>
+
           <div className='flex items-center gap-3'>
             {tokenImage && (
               <img
@@ -225,27 +225,28 @@ export function TokenForm({
                 className='w-8 h-8 rounded-full'
               />
             )}
-            <div className='text-right'>
-              <h3 className='font-medium'>{tokenName}</h3>
-              <p className='text-sm text-slate-500'>{initialTokenId}</p>
+            <div className='text-left'>
+              <h3 className='font-medium text-base sm:text-lg'>{tokenName}</h3>
+              <p className='text-xs sm:text-sm text-slate-500'>
+                {initialTokenId}
+              </p>
             </div>
           </div>
         </div>
-        <div className='h-px bg-slate-200' />
-      </div>
 
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+        <div className='h-px bg-slate-200' />
+
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           <FormField
             control={form.control}
             name='logoPng'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>PNG Logo</FormLabel>
+                <FormLabel className='text-sm sm:text-base'>PNG Logo</FormLabel>
                 <FormControl>
-                  <div className='space-y-2'>
+                  <div className='space-y-3'>
                     {pngPreview ? (
-                      <div className='relative w-32 h-32 rounded-lg border overflow-hidden group'>
+                      <div className='relative w-24 sm:w-32 h-24 sm:h-32 rounded-lg border overflow-hidden group'>
                         <img
                           src={pngPreview}
                           alt='PNG Preview'
@@ -256,14 +257,18 @@ export function TokenForm({
                           onClick={() =>
                             clearFile(field, setPngPreview, 'png-input')
                           }
-                          className='absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity'
+                          className='absolute inset-0 bg-black/50 text-white flex items-center justify-center 
+                                   opacity-0 group-hover:opacity-100 transition-opacity'
                         >
-                          <X className='h-6 w-6' />
+                          <X className='h-5 sm:h-6 w-5 sm:w-6' />
                         </button>
                       </div>
                     ) : (
-                      <div className='w-32 h-32 rounded-lg border-2 border-dashed flex items-center justify-center'>
-                        <ImageIcon className='h-8 w-8 text-gray-400' />
+                      <div
+                        className='w-24 sm:w-32 h-24 sm:h-32 rounded-lg border-2 border-dashed 
+                                    flex items-center justify-center'
+                      >
+                        <ImageIcon className='h-6 sm:h-8 w-6 sm:w-8 text-gray-400' />
                       </div>
                     )}
                     <Input
@@ -273,7 +278,7 @@ export function TokenForm({
                       onChange={(e) =>
                         handleFileChange(e, field, setPngPreview, 'png')
                       }
-                      className={pngPreview ? 'hidden' : ''}
+                      className={pngPreview ? 'hidden' : 'text-sm'}
                     />
                     {pngPreview && (
                       <Button
@@ -283,13 +288,14 @@ export function TokenForm({
                         onClick={() =>
                           document.getElementById('png-input')?.click()
                         }
+                        className='w-full sm:w-auto text-sm'
                       >
                         Change PNG
                       </Button>
                     )}
                   </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className='text-xs sm:text-sm' />
               </FormItem>
             )}
           />
@@ -299,11 +305,11 @@ export function TokenForm({
             name='logoSvg'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>SVG Logo</FormLabel>
+                <FormLabel className='text-sm sm:text-base'>SVG Logo</FormLabel>
                 <FormControl>
-                  <div className='space-y-2'>
+                  <div className='space-y-3'>
                     {svgPreview ? (
-                      <div className='relative w-32 h-32 rounded-lg border overflow-hidden group'>
+                      <div className='relative w-24 sm:w-32 h-24 sm:h-32 rounded-lg border overflow-hidden group'>
                         <img
                           src={svgPreview}
                           alt='SVG Preview'
@@ -314,14 +320,18 @@ export function TokenForm({
                           onClick={() =>
                             clearFile(field, setSvgPreview, 'svg-input')
                           }
-                          className='absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity'
+                          className='absolute inset-0 bg-black/50 text-white flex items-center justify-center 
+                                   opacity-0 group-hover:opacity-100 transition-opacity'
                         >
-                          <X className='h-6 w-6' />
+                          <X className='h-5 sm:h-6 w-5 sm:w-6' />
                         </button>
                       </div>
                     ) : (
-                      <div className='w-32 h-32 rounded-lg border-2 border-dashed flex items-center justify-center'>
-                        <ImageIcon className='h-8 w-8 text-gray-400' />
+                      <div
+                        className='w-24 sm:w-32 h-24 sm:h-32 rounded-lg border-2 border-dashed 
+                                    flex items-center justify-center'
+                      >
+                        <ImageIcon className='h-6 sm:h-8 w-6 sm:w-8 text-gray-400' />
                       </div>
                     )}
                     <Input
@@ -331,7 +341,7 @@ export function TokenForm({
                       onChange={(e) =>
                         handleFileChange(e, field, setSvgPreview, 'svg')
                       }
-                      className={svgPreview ? 'hidden' : ''}
+                      className={svgPreview ? 'hidden' : 'text-sm'}
                     />
                     {svgPreview && (
                       <Button
@@ -341,114 +351,136 @@ export function TokenForm({
                         onClick={() =>
                           document.getElementById('svg-input')?.click()
                         }
+                        className='w-full sm:w-auto text-sm'
                       >
                         Change SVG
                       </Button>
                     )}
                   </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className='text-xs sm:text-sm' />
               </FormItem>
             )}
           />
         </div>
 
-        <FormField
-          control={form.control}
-          name='website'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Website</FormLabel>
-              <FormControl>
-                <Input placeholder='https://...' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className='space-y-6'>
+          <FormField
+            control={form.control}
+            name='website'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className='text-sm sm:text-base'>Website</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='https://...'
+                    {...field}
+                    className='text-sm sm:text-base p-2 sm:p-3'
+                  />
+                </FormControl>
+                <FormMessage className='text-xs sm:text-sm' />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name='description'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder='Tell us about your token...'
-                  className='min-h-[100px]'
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className='space-y-4'>
-          <div className='flex items-center justify-between'>
-            <h3 className='text-lg font-medium'>Social Links</h3>
-            <Button
-              type='button'
-              variant='outline'
-              size='sm'
-              onClick={() => append({ platform: '', url: '' })}
-            >
-              <Plus className='mr-2 h-4 w-4' />
-              Add Social
-            </Button>
-          </div>
+          <FormField
+            control={form.control}
+            name='description'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className='text-sm sm:text-base'>
+                  Description
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder='Tell us about your token...'
+                    className='min-h-[100px] text-sm sm:text-base p-2 sm:p-3'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage className='text-xs sm:text-sm' />
+              </FormItem>
+            )}
+          />
 
           <div className='space-y-4'>
-            {fields.map((field, index) => (
-              <div key={field.id} className='flex gap-4 items-start'>
-                <FormField
-                  control={form.control}
-                  name={`socials.${index}.platform`}
-                  render={({ field }) => (
-                    <FormItem className='flex-1'>
-                      <FormControl>
-                        <Input
-                          placeholder='Platform (e.g., Twitter)'
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={`socials.${index}.url`}
-                  render={({ field }) => (
-                    <FormItem className='flex-1'>
-                      <FormControl>
-                        <Input placeholder='URL' {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type='button'
-                  variant='destructive'
-                  size='icon'
-                  className='mt-1'
-                  onClick={() => remove(index)}
+            <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2'>
+              <h3 className='text-base sm:text-lg font-medium'>Social Links</h3>
+              <Button
+                type='button'
+                variant='outline'
+                size='sm'
+                onClick={() => append({ platform: '', url: '' })}
+                className='w-full sm:w-auto'
+              >
+                <Plus className='mr-2 h-4 w-4' />
+                Add Social
+              </Button>
+            </div>
+
+            <div className='space-y-3'>
+              {fields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className='flex flex-col sm:flex-row gap-2 sm:gap-4'
                 >
-                  <Trash2 className='h-4 w-4' />
-                </Button>
-              </div>
-            ))}
+                  <FormField
+                    control={form.control}
+                    name={`socials.${index}.platform`}
+                    render={({ field }) => (
+                      <FormItem className='flex-1'>
+                        <FormControl>
+                          <Input
+                            placeholder='Platform (e.g., Twitter)'
+                            {...field}
+                            className='text-sm sm:text-base p-2 sm:p-3'
+                          />
+                        </FormControl>
+                        <FormMessage className='text-xs sm:text-sm' />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`socials.${index}.url`}
+                    render={({ field }) => (
+                      <FormItem className='flex-1'>
+                        <FormControl>
+                          <Input
+                            placeholder='URL'
+                            {...field}
+                            className='text-sm sm:text-base p-2 sm:p-3'
+                          />
+                        </FormControl>
+                        <FormMessage className='text-xs sm:text-sm' />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type='button'
+                    variant='destructive'
+                    size='icon'
+                    onClick={() => remove(index)}
+                    className='self-start'
+                  >
+                    <Trash2 className='h-4 w-4' />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className='flex justify-end'>
-          <Button type='submit' disabled={isSubmitting} size='lg'>
+        <div className='flex flex-col sm:flex-row justify-end gap-3 pt-4'>
+          <Button
+            type='submit'
+            disabled={isSubmitting}
+            className='w-full sm:w-auto order-2 sm:order-1'
+          >
             {isSubmitting ? 'Submitting...' : 'Submit'}
           </Button>
         </div>
-      </form>
+      </div>
     </Form>
   );
 }

@@ -55,19 +55,21 @@ export function TokenSearch({
 
       setLoading(true);
       try {
-        let response;
+        let data;
         if (mode === 'memexchange') {
-          response = await fetch(
+          const response = await fetch(
             `${
               import.meta.env.VITE_MEMEXCHANGE_API_URL
             }/api/bonding-pairs/search?query=${debouncedSearch}&state=Finished`
           );
+          data = await response.json();
         } else {
-          response = await fetch(
-            `${network.apiAddress}/accounts/${address}/tokens`
+          const response = await fetch(
+            `${network.apiAddress}/accounts/${address}/tokens?type=FungibleESDT`
           );
+          data = await response.json();
+          data = data.filter((item: any) => item.owner === address);
         }
-        const data = await response.json();
 
         if (mode === 'own') {
           // Filter tokens based on search if needed
@@ -129,38 +131,41 @@ export function TokenSearch({
               ? 'Search for a token...'
               : 'Search your tokens...'
           }
-          className='w-full h-12 pl-10 text-lg'
+          className='w-full h-10 sm:h-12 pl-10 text-base sm:text-lg rounded-lg'
         />
-        <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400' />
+        <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-gray-400' />
       </div>
 
       {isOpen && (results?.items?.length || loading) ? (
-        <div className='absolute z-50 w-full mt-1 bg-white rounded-lg border shadow-lg max-h-[300px] overflow-auto'>
+        <div className='absolute z-50 w-full mt-1 sm:mt-2 bg-white rounded-lg border shadow-lg max-h-[60vh] sm:max-h-[300px] overflow-auto'>
           {loading ? (
-            <div className='p-4 text-center text-gray-500'>Searching...</div>
+            <div className='p-3 sm:p-4 text-center text-gray-500 text-sm sm:text-base'>
+              Searching...
+            </div>
           ) : (
-            <div className='p-2'>
+            <div className='p-1 sm:p-2'>
               {results?.items.map((token: any) => (
                 <button
                   key={
                     mode === 'memexchange' ? token.firstToken : token.identifier
                   }
                   onClick={() => handleSelect(token)}
-                  className='w-full text-left p-3 hover:bg-gray-50 rounded-md flex items-center gap-3 group'
+                  className='w-full text-left p-2 sm:p-3 hover:bg-gray-50 rounded-md 
+                           flex items-center gap-2 sm:gap-3 group transition-colors'
                 >
-                  <div className='flex items-center gap-3 flex-1'>
+                  <div className='flex items-center gap-2 sm:gap-3 flex-1 min-w-0'>
                     {mode === 'memexchange' && token.coin.imageUrl && (
                       <img
                         src={token.coin.imageUrl}
                         alt={token.coin.name}
-                        className='w-8 h-8 rounded-full'
+                        className='w-6 h-6 sm:w-8 sm:h-8 rounded-full flex-shrink-0'
                       />
                     )}
-                    <div className='flex flex-col'>
-                      <span className='font-medium group-hover:text-blue-600'>
+                    <div className='flex flex-col min-w-0'>
+                      <span className='font-medium text-sm sm:text-base group-hover:text-blue-600 truncate'>
                         {mode === 'memexchange' ? token.coin.name : token.name}
                       </span>
-                      <span className='text-sm text-gray-500'>
+                      <span className='text-xs sm:text-sm text-gray-500 truncate'>
                         {mode === 'memexchange'
                           ? token.firstToken
                           : token.identifier}
@@ -168,7 +173,10 @@ export function TokenSearch({
                     </div>
                   </div>
                   {mode === 'memexchange' && token.creator === address && (
-                    <span className='text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full'>
+                    <span
+                      className='text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full 
+                                   whitespace-nowrap flex-shrink-0'
+                    >
                       Creator
                     </span>
                   )}
@@ -176,6 +184,12 @@ export function TokenSearch({
               ))}
             </div>
           )}
+        </div>
+      ) : isOpen && debouncedSearch ? (
+        <div className='absolute z-50 w-full mt-1 sm:mt-2 bg-white rounded-lg border shadow-lg'>
+          <div className='p-3 sm:p-4 text-center text-gray-500 text-sm sm:text-base'>
+            No results found
+          </div>
         </div>
       ) : null}
     </div>
