@@ -23,6 +23,7 @@ export interface TokenBrandingRequest {
   };
   logoPng: File;
   logoSvg: File;
+  creator: string;
 }
 
 interface BrandingStep1Response {
@@ -34,13 +35,15 @@ export class ApiService {
     tokenId,
     tokenInfo,
     logoPng,
-    logoSvg
+    logoSvg,
+    creator
   }: TokenBrandingRequest): Promise<TokenBrandingResponse> {
     const formData = new FormData();
     formData.append('tokenId', tokenId);
     formData.append('tokenInfo', JSON.stringify(tokenInfo));
     formData.append('logoPng', logoPng);
     formData.append('logoSvg', logoSvg);
+    formData.append('creator', creator);
 
     const response = await axios.post<TokenBrandingResponse>(
       `${API_URL}/api/token-branding`,

@@ -16,6 +16,7 @@ interface TokenSearchProps {
     description?: string;
     website?: string;
     social?: Record<string, string>;
+    creator?: string;
   }) => void;
   mode?: 'memexchange' | 'own';
 }
@@ -138,7 +139,8 @@ export function TokenSearch({
           imageUrl: token.coin.imageUrl,
           description: token.coin.description,
           website: token.coin.website,
-          social: token.coin.social
+          social: token.coin.social,
+          creator: token.creator
         });
         setIsOpen(false);
         setSearch(token.coin.name);
@@ -215,13 +217,24 @@ export function TokenSearch({
                       </span>
                     </div>
                   </div>
-                  {mode === 'memexchange' && token.creator === address && (
-                    <span
-                      className='text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full 
-                                   whitespace-nowrap flex-shrink-0'
-                    >
-                      Creator
-                    </span>
+                  {mode === 'memexchange' && (
+                    <>
+                      {token.creator === address ? (
+                        <span
+                          className='text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full 
+                                     whitespace-nowrap flex-shrink-0'
+                        >
+                          Creator
+                        </span>
+                      ) : (
+                        <span
+                          className='text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full 
+                                     whitespace-nowrap flex-shrink-0'
+                        >
+                          Not allowed
+                        </span>
+                      )}
+                    </>
                   )}
                 </button>
               ))}
