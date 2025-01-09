@@ -3,8 +3,10 @@ import { network } from '@/config';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useGetAccountInfo } from '@multiversx/sdk-dapp/hooks';
+import axios, { AxiosResponse } from 'axios';
 import { Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import useSWR from 'swr';
 
 interface TokenSearchProps {
   onSelect: (token: {
@@ -31,6 +33,12 @@ interface OwnToken {
   mexPairType?: string;
 }
 
+interface TokenDetails {
+  identifier: string;
+  owner: string;
+  // ... other fields if needed
+}
+
 export function TokenSearch({
   onSelect,
   mode = 'memexchange'
@@ -40,9 +48,15 @@ export function TokenSearch({
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [tokenError, setTokenError] = useState<string | null>(null);
 
   const { address } = useGetAccountInfo();
   const debouncedSearch = useDebounce(search, 300);
+
+  const { data: mvxBrandingOwnerRes } = useSWR<
+    AxiosResponse<{ owner: string }>
+  >(`${import.meta.env.VITE_API_URL}/api/branding/owner`, axios.get);
+  const mvxBrandingOwner = mvxBrandingOwnerRes?.data?.owner;
 
   useClickOutside(containerRef, () => setIsOpen(false));
 
@@ -100,24 +114,47 @@ export function TokenSearch({
     searchTokens();
   }, [debouncedSearch, mode]);
 
-  const handleSelect = (token: any) => {
+  const handleSelect = async (token: any) => {
     if (mode === 'memexchange') {
-      onSelect({
-        identifier: token.firstToken,
-        name: token.coin.name,
-        imageUrl: token.coin.imageUrl,
-        description: token.coin.description,
-        website: token.coin.website,
-        social: token.coin.social
-      });
+      try {
+        // Fetch token details from MultiversX API
+        const response = await fetch(
+          `${network.apiAddress}/tokens?identifiers=${token.firstToken}`
+        );
+        const [tokenDetails]: TokenDetails[] = await response.json();
+
+        if (tokenDetails.owner !== mvxBrandingOwner) {
+          setTokenError(
+            'Invalid token ownership. Please report this to admin.'
+          );
+          setIsOpen(false); // Close the dropdown when showing error
+          return;
+        }
+
+        setTokenError(null); // Clear any existing error
+        onSelect({
+          identifier: token.firstToken,
+          name: token.coin.name,
+          imageUrl: token.coin.imageUrl,
+          description: token.coin.description,
+          website: token.coin.website,
+          social: token.coin.social
+        });
+        setIsOpen(false);
+        setSearch(token.coin.name);
+      } catch (error) {
+        console.error('Failed to verify token ownership:', error);
+        setTokenError('Failed to verify token. Please try again later.');
+        setIsOpen(false); // Close the dropdown when showing error
+      }
     } else {
       onSelect({
         identifier: token.identifier,
         name: token.name
       });
+      setIsOpen(false);
+      setSearch(token.name);
     }
-    setIsOpen(false);
-    setSearch(mode === 'memexchange' ? token.coin.name : token.name);
   };
 
   return (
@@ -135,6 +172,12 @@ export function TokenSearch({
         />
         <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-gray-400' />
       </div>
+
+      {tokenError && (
+        <div className='absolute z-50 w-full mt-1 sm:mt-2 bg-red-50 text-red-600 rounded-lg border border-red-200 p-3'>
+          {tokenError}
+        </div>
+      )}
 
       {isOpen && (results?.items?.length || loading) ? (
         <div className='absolute z-50 w-full mt-1 sm:mt-2 bg-white rounded-lg border shadow-lg max-h-[60vh] sm:max-h-[300px] overflow-auto'>
