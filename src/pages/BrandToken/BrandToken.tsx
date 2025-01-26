@@ -1,3 +1,4 @@
+import { ImageRequirementsHelper } from '@/components/ImageRequirementsHelper/ImageRequirementsHelper';
 import { TokenForm } from '@/components/TokenForm/TokenForm';
 import { TokenSearch } from '@/components/TokenSearch/TokenSearch';
 import { Button } from '@/components/ui/button';
@@ -87,8 +88,11 @@ export const BrandToken = () => {
             </div>
           </div>
         ) : !selectedToken && !creatorError ? (
-          <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
-            <TokenSearch onSelect={handleTokenSelect} />
+          <div className='space-y-4'>
+            <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
+              <TokenSearch onSelect={handleTokenSelect} />
+            </div>
+            <ImageRequirementsHelper />
           </div>
         ) : creatorError ? (
           <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
@@ -118,20 +122,23 @@ export const BrandToken = () => {
           </div>
         ) : (
           selectedToken && (
-            <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
-              <TokenForm
-                mode='edit'
-                initialTokenId={selectedToken.identifier}
-                tokenName={selectedToken.name}
-                tokenImage={selectedToken.imageUrl}
-                description={selectedToken.description}
-                website={selectedToken.website}
-                social={selectedToken.social}
-                onBack={() => setSelectedToken(null)}
-                onBrandingSuccess={(response) =>
-                  setIsCompleted(response.pullRequestUrl)
-                }
-              />
+            <div className='space-y-4'>
+              <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
+                <TokenForm
+                  mode='edit'
+                  initialTokenId={selectedToken.identifier}
+                  tokenName={selectedToken.name}
+                  tokenImage={selectedToken.imageUrl}
+                  description={selectedToken.description}
+                  website={selectedToken.website}
+                  social={selectedToken.social}
+                  onBack={() => setSelectedToken(null)}
+                  onBrandingSuccess={(response) =>
+                    setIsCompleted(response.pullRequestUrl)
+                  }
+                />
+              </div>
+              <ImageRequirementsHelper />
             </div>
           )
         )}

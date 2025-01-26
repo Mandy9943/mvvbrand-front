@@ -1,3 +1,4 @@
+import { ImageRequirementsHelper } from '@/components/ImageRequirementsHelper/ImageRequirementsHelper';
 import { SignMessage } from '@/components/SignMessage/SignMessage';
 import { TokenForm } from '@/components/TokenForm/TokenForm';
 import { TokenSearch } from '@/components/TokenSearch/TokenSearch';
@@ -99,26 +100,32 @@ export const BrandOwnToken = () => {
 
     if (!selectedToken) {
       return (
-        <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
-          <TokenSearch onSelect={setSelectedToken} mode='own' />
+        <div className='space-y-4'>
+          <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
+            <TokenSearch onSelect={setSelectedToken} mode='own' />
+          </div>
+          <ImageRequirementsHelper />
         </div>
       );
     }
 
     if (!commitHash) {
       return (
-        <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
-          <TokenForm
-            mode='create'
-            initialTokenId={selectedToken.identifier}
-            tokenName={selectedToken.name}
-            tokenImage={selectedToken.imageUrl}
-            description={selectedToken.description}
-            website={selectedToken.website}
-            social={selectedToken.social}
-            onBack={() => setSelectedToken(null)}
-            onPrepareSuccess={handlePrepareSuccess}
-          />
+        <div className='space-y-4'>
+          <div className='bg-white p-4 sm:p-8 rounded-xl shadow-sm border'>
+            <TokenForm
+              mode='create'
+              initialTokenId={selectedToken.identifier}
+              tokenName={selectedToken.name}
+              tokenImage={selectedToken.imageUrl}
+              description={selectedToken.description}
+              website={selectedToken.website}
+              social={selectedToken.social}
+              onBack={() => setSelectedToken(null)}
+              onPrepareSuccess={handlePrepareSuccess}
+            />
+          </div>
+          <ImageRequirementsHelper />
         </div>
       );
     }
