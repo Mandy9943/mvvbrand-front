@@ -160,94 +160,132 @@ export function TokenSearch({
   };
 
   return (
-    <div className='relative w-full' ref={containerRef}>
-      <div className='relative'>
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder={
-            mode === 'memexchange'
-              ? 'Search for a token...'
-              : 'Search your tokens...'
-          }
-          className='w-full h-10 sm:h-12 pl-10 text-base sm:text-lg rounded-lg'
-        />
-        <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-gray-400' />
+    <div className='space-y-4'>
+      <div className='relative w-full' ref={containerRef}>
+        <div className='relative'>
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={
+              mode === 'memexchange'
+                ? 'Search for a token...'
+                : 'Search your tokens...'
+            }
+            className='w-full h-10 sm:h-12 pl-10 text-base sm:text-lg rounded-lg'
+          />
+          <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-gray-400' />
+        </div>
+
+        {tokenError && (
+          <div className='absolute z-50 w-full mt-1 sm:mt-2 bg-red-50 text-red-600 rounded-lg border border-red-200 p-3'>
+            {tokenError}
+          </div>
+        )}
+
+        {isOpen && (results?.items?.length || loading) ? (
+          <div className='absolute z-50 w-full mt-1 sm:mt-2 bg-white rounded-lg border shadow-lg max-h-[60vh] sm:max-h-[300px] overflow-auto'>
+            {loading ? (
+              <div className='p-3 sm:p-4 text-center text-gray-500 text-sm sm:text-base'>
+                Searching...
+              </div>
+            ) : (
+              <div className='p-1 sm:p-2'>
+                {results?.items.map((token: any) => (
+                  <button
+                    key={
+                      mode === 'memexchange'
+                        ? token.firstToken
+                        : token.identifier
+                    }
+                    onClick={() => handleSelect(token)}
+                    className='w-full text-left p-2 sm:p-3 hover:bg-gray-50 rounded-md 
+                             flex items-center gap-2 sm:gap-3 group transition-colors'
+                  >
+                    <div className='flex items-center gap-2 sm:gap-3 flex-1 min-w-0'>
+                      {mode === 'memexchange' && token.coin.imageUrl && (
+                        <img
+                          src={token.coin.imageUrl}
+                          alt={token.coin.name}
+                          className='w-6 h-6 sm:w-8 sm:h-8 rounded-full flex-shrink-0'
+                        />
+                      )}
+                      <div className='flex flex-col min-w-0'>
+                        <span className='font-medium text-sm sm:text-base group-hover:text-blue-600 truncate'>
+                          {mode === 'memexchange'
+                            ? token.coin.name
+                            : token.name}
+                        </span>
+                        <span className='text-xs sm:text-sm text-gray-500 truncate'>
+                          {mode === 'memexchange'
+                            ? token.firstToken
+                            : token.identifier}
+                        </span>
+                      </div>
+                    </div>
+                    {mode === 'memexchange' && (
+                      <>
+                        {token.creator === address ? (
+                          <span
+                            className='text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full 
+                                       whitespace-nowrap flex-shrink-0'
+                          >
+                            Creator
+                          </span>
+                        ) : (
+                          <span
+                            className='text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full 
+                                       whitespace-nowrap flex-shrink-0'
+                          >
+                            Not allowed
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : isOpen && debouncedSearch ? (
+          <div className='absolute z-50 w-full mt-1 sm:mt-2 bg-white rounded-lg border shadow-lg'>
+            <div className='p-3 sm:p-4 text-center text-gray-500 text-sm sm:text-base'>
+              No results found
+            </div>
+          </div>
+        ) : null}
       </div>
 
-      {tokenError && (
-        <div className='absolute z-50 w-full mt-1 sm:mt-2 bg-red-50 text-red-600 rounded-lg border border-red-200 p-3'>
-          {tokenError}
-        </div>
-      )}
-
-      {isOpen && (results?.items?.length || loading) ? (
-        <div className='absolute z-50 w-full mt-1 sm:mt-2 bg-white rounded-lg border shadow-lg max-h-[60vh] sm:max-h-[300px] overflow-auto'>
-          {loading ? (
-            <div className='p-3 sm:p-4 text-center text-gray-500 text-sm sm:text-base'>
-              Searching...
-            </div>
-          ) : (
-            <div className='p-1 sm:p-2'>
-              {results?.items.map((token: any) => (
-                <button
-                  key={
-                    mode === 'memexchange' ? token.firstToken : token.identifier
-                  }
-                  onClick={() => handleSelect(token)}
-                  className='w-full text-left p-2 sm:p-3 hover:bg-gray-50 rounded-md 
-                           flex items-center gap-2 sm:gap-3 group transition-colors'
-                >
-                  <div className='flex items-center gap-2 sm:gap-3 flex-1 min-w-0'>
-                    {mode === 'memexchange' && token.coin.imageUrl && (
-                      <img
-                        src={token.coin.imageUrl}
-                        alt={token.coin.name}
-                        className='w-6 h-6 sm:w-8 sm:h-8 rounded-full flex-shrink-0'
-                      />
-                    )}
-                    <div className='flex flex-col min-w-0'>
-                      <span className='font-medium text-sm sm:text-base group-hover:text-blue-600 truncate'>
-                        {mode === 'memexchange' ? token.coin.name : token.name}
-                      </span>
-                      <span className='text-xs sm:text-sm text-gray-500 truncate'>
-                        {mode === 'memexchange'
-                          ? token.firstToken
-                          : token.identifier}
-                      </span>
-                    </div>
-                  </div>
-                  {mode === 'memexchange' && (
-                    <>
-                      {token.creator === address ? (
-                        <span
-                          className='text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full 
-                                     whitespace-nowrap flex-shrink-0'
-                        >
-                          Creator
-                        </span>
-                      ) : (
-                        <span
-                          className='text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full 
-                                     whitespace-nowrap flex-shrink-0'
-                        >
-                          Not allowed
-                        </span>
-                      )}
-                    </>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      ) : isOpen && debouncedSearch ? (
-        <div className='absolute z-50 w-full mt-1 sm:mt-2 bg-white rounded-lg border shadow-lg'>
-          <div className='p-3 sm:p-4 text-center text-gray-500 text-sm sm:text-base'>
-            No results found
+      <div className='mt-6 pt-4 border-t border-slate-200'>
+        <div className='flex items-start space-x-3 bg-blue-50 rounded-lg p-4'>
+          <div className='flex-shrink-0'>
+            <svg
+              className='h-5 w-5 text-blue-400'
+              fill='currentColor'
+              viewBox='0 0 20 20'
+            >
+              <path
+                fillRule='evenodd'
+                d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z'
+                clipRule='evenodd'
+              />
+            </svg>
+          </div>
+          <div className='flex-1'>
+            <p className='text-sm text-blue-700'>
+              Don't have a token yet? You can{' '}
+              <a
+                href='https://wallet.multiversx.com/unlock'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='font-medium underline hover:text-blue-800'
+              >
+                create one using MultiversX Wallet
+              </a>{' '}
+              and then come back here to brand it.
+            </p>
           </div>
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }
