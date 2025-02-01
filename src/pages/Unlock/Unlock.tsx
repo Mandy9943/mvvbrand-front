@@ -14,6 +14,7 @@ import { useWalletConnectV2Login } from '@multiversx/sdk-dapp/hooks/login/useWal
 import { useWebWalletLogin } from '@multiversx/sdk-dapp/hooks/login/useWebWalletLogin';
 import {
   CrossWindowLoginButton,
+  WalletConnectLoginButton,
   WebWalletLoginButton as WebWalletUrlLoginButton,
   type ExtensionLoginButtonPropsType,
   type LedgerLoginButtonPropsType,
@@ -111,11 +112,10 @@ export const Unlock = () => {
               Web Wallet
             </span>
           </button>
-
-          <button
-            onClick={() => walletConnectLogin()}
-            className='flex flex-col items-center gap-3 p-4 rounded-xl hover:bg-slate-50 
-                     transition-all group'
+          <WalletConnectLoginButton
+            loginButtonText='xPortal App'
+            {...commonProps}
+            className='!bg-transparent !border-none !shadow-none !flex !flex-col !items-center !gap-3 !ml-0 !mt-0 !mb-0 !mr-0 !p-4  !rounded-xl hover:!bg-slate-50 transition-all group'
           >
             <div
               className='w-12 h-12 flex items-center justify-center bg-slate-100 
@@ -123,10 +123,10 @@ export const Unlock = () => {
             >
               <XPortalIcon height={25} />
             </div>
-            <span className='text-sm font-medium text-slate-700'>
+            <span className='text-sm font-medium text-slate-700 whitespace-nowrap'>
               xPortal App
             </span>
-          </button>
+          </WalletConnectLoginButton>
         </div>
 
         {/* Help Text */}
