@@ -1,5 +1,6 @@
 import { RouteNamesEnum } from '@/localConstants/routes';
 import { routes } from '@/routes/routes';
+import { useGetLoginInfo } from '@multiversx/sdk-dapp/hooks';
 import { AuthenticatedRoutesWrapper } from '@multiversx/sdk-dapp/wrappers/AuthenticatedRoutesWrapper/AuthenticatedRoutesWrapper';
 import { RocketIcon } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
@@ -8,6 +9,12 @@ import { Header } from './Header';
 
 export const Layout = ({ children }: PropsWithChildren) => {
   const { search } = useLocation();
+  const { tokenLogin } = useGetLoginInfo();
+
+  let memeExchangeLink = 'https://memexchange.fun';
+  if (tokenLogin?.nativeAuthToken) {
+    memeExchangeLink = `${memeExchangeLink}?accessToken=${tokenLogin?.nativeAuthToken}`;
+  }
   return (
     <div className='flex min-h-screen flex-col bg-slate-200'>
       <Header />
@@ -17,7 +24,7 @@ export const Layout = ({ children }: PropsWithChildren) => {
           <span className='text-center'>
             Looking for a fair launch platform?{' '}
             <a
-              href='https://memexchange.fun/'
+              href={memeExchangeLink}
               target='_blank'
               rel='noopener noreferrer'
               className='text-blue-600 hover:text-blue-800 font-medium'
